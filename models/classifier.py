@@ -1,4 +1,6 @@
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import ExtraTreesClassifier
 
 class Classifier:
 
