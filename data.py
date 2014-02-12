@@ -8,6 +8,15 @@ class Data:
 
     @classmethod
     def train(self, limit=None):
+        features, targets = self.labels_and_features(limit)
+        data = []
+        for f in features:
+            print f
+            data.append(self.features_array(f))
+        return data, targets
+
+    @classmethod
+    def labels_and_features(self, limit=None):
         targets, data = [], []
         f, lines = self.lines(training_file, limit)
         for line in lines:
@@ -20,7 +29,7 @@ class Data:
                 else:
                     break
             labels = line[:start_of_features_index]
-            features = self.features_array(line[start_of_features_index:])
+            features = line[start_of_features_index:]
 
             targets.append(labels)
             data.append(features)
