@@ -5,7 +5,7 @@ import time
 import sys
 
 limit = int(sys.argv[1])
-data, targets = Data.train(limit=limit)
+data, targets = RawData.train(limit=limit)
 tr_data, tr_targets = data[:limit/2], targets[:limit/2]
 cv_data, cv_targets = data[limit/2:], targets[limit/2:]
 

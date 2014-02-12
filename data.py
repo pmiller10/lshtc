@@ -2,21 +2,38 @@ import re
 
 training_file = 'data/train.csv'
 test_file = 'data/test.csv'
-features_count = 100000
+features_count = 2100000
 
-class Data:
+class RawData:
 
     @classmethod
     def train(self, limit=None):
-        features, targets = self.labels_and_features(limit)
+        features, targets = self.labels_and_features(training_file, limit)
         data = []
         for f in features:
-            print f
             data.append(self.features_array(f))
         return data, targets
 
     @classmethod
-    def labels_and_features(self, limit=None):
+    def raw_training_data(self, limit=None):
+        return self.raw_data(training_file, limit)
+
+    @classmethod
+    def raw_data(self, filepath, limit=None):
+        features, targets = self.labels_and_features(filepath, limit)
+        documents = []
+        for doc_features in features:
+            document = []
+            for pair in doc_features:
+                f = pair.split(':')
+                word, occurences = f[0], f[1]
+                for i in range(int(occurences)):
+                    document.append(word)
+            documents.append(document)
+        return documents, targets
+
+    @classmethod
+    def labels_and_features(self, filepath, limit=None):
         targets, data = [], []
         f, lines = self.lines(training_file, limit)
         for line in lines:
@@ -29,6 +46,7 @@ class Data:
                 else:
                     break
             labels = line[:start_of_features_index]
+            labels = [re.sub(',', '', label) for label in labels]
             features = line[start_of_features_index:]
 
             targets.append(labels)
@@ -58,6 +76,4 @@ class Data:
         return counts
 
 if __name__ == "__main__":
-    data, targets = Data.train(limit=3)
-    print targets
-    print data[0]
+    print Data.raw_training_data(10)
