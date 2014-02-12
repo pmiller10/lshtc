@@ -3,8 +3,22 @@ import re
 training_file = 'data/train.csv'
 test_file = 'data/test.csv'
 features_count = 2100000
+compressed = 'data/training_compressed_100.csv'
+compressed = 'training_compressed_100.csv'
 
-class RawData:
+class Data:
+
+    @classmethod
+    def lines(self, filepath, limit):
+        f = file(filepath, 'r')
+        if limit:
+            lines = f.readlines()[1:limit] # start at 1 to strip the header
+        else:
+            lines = f.readlines()[1:] # start at 1 to strip the header
+        lines = [re.sub('\n', '', line) for line in lines]
+        return f, lines
+
+class RawData(Data):
 
     @classmethod
     def train(self, limit=None):
@@ -54,16 +68,6 @@ class RawData:
         f.close()
         return data, targets
 
-    @classmethod
-    def lines(self, filepath, limit):
-        f = file(filepath, 'r')
-        if limit:
-            lines = f.readlines()[1:limit] # start at 1 to strip the header
-        else:
-            lines = f.readlines()[1:] # start at 1 to strip the header
-        lines = [re.sub('\n', '', line) for line in lines]
-        return f, lines
-
     @classmethod 
     def features_array(self, features):
         counts = [0] * features_count
@@ -74,6 +78,23 @@ class RawData:
             if feature <= features_count:
                 counts[index] = count
         return counts
+
+class CompressedData(Data):
+
+    @classmethod
+    def data(self, limit=None):
+        targets, data = [], []
+        f, lines = self.lines(compressed, limit)
+        for line in lines:
+            line = line.split('\t')
+            labels,features = line[0], line[1]
+            labels = labels.split(',')
+            features = features.split(',')
+            features = [float(i) for i in features]
+            targets.append(labels)
+            data.append(features)
+        f.close()
+        return data, targets
 
 if __name__ == "__main__":
     print Data.raw_training_data(10)

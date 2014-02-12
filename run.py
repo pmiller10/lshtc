@@ -1,11 +1,12 @@
-from data import Data
+from data import CompressedData
 from models.classifier import Classifier
 from sklearn.linear_model import LogisticRegression
+from score import score
 import time
 import sys
 
 limit = int(sys.argv[1])
-data, targets = RawData.train(limit=limit)
+data, targets = CompressedData.data(limit=limit)
 tr_data, tr_targets = data[:limit/2], targets[:limit/2]
 cv_data, cv_targets = data[limit/2:], targets[limit/2:]
 
@@ -14,8 +15,5 @@ start = time.time()
 logistic.train(tr_data, tr_targets) 
 print 'duration ', time.time() - start
 
-for i,c in enumerate(cv_data):
-    pred = logistic.predict(c)
-    print pred in cv_targets[i]
-    print pred, cv_targets[i]
-    print "\n"
+preds = [logistic.predict(c) for c in cv_data]
+print score(preds, cv_targets)
