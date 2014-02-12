@@ -11,7 +11,10 @@ def recall(preds, targets):
 def f1(preds, targets):
     p = precision(preds, targets)
     r = recall(preds, targets)
-    return (2 * p * r)/(p + r)
+    if p+r == 0:
+        return 0
+    else:
+        return (2 * p * r)/(p + r)
 
 def score(all_preds, all_targets):
     scores = []
